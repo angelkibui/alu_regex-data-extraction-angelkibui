@@ -1,0 +1,14 @@
+Hello, this is a sample text to demonstrate the data extraction capabilities.
+
+You can contact our support team at support@example.com or john.doe@company.co.uk.
+For more information, visit https://www.example.com or check our documentation at 
+https://docs.example.org/page/help.
+
+You can reach us by phone at (123) 456-7890 or 987-654-3210 or 555.123.4567.
+
+If you'd like to purchase our premium package, please have your card ready:
+4111 5678 9012 3456 or 4111-5678-9012-3456.
+
+Follow us on social media with #DataExtraction and #RegexIsPowerful.
+
+Thank you for using our services!
