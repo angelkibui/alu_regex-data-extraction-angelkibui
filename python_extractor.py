@@ -1,99 +1,53 @@
+#!/usr/bin/env python3
+
 import re
-import sys
 
-class DataExtractor:
-    def __init__(self):
-        # Email regex - captures standard email formats and subdomains
-        self.email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        
-        # URL regex - captures http/https URLs with optional subdomains and paths
-        self.url_pattern = r'https?://(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?://(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}'
-        
-        # Phone number regex - captures common US/international formats with various separators
-        self.phone_pattern = r'\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}'
-        
-        # Credit card regex - 16 digits in groups of 4, separated by spaces or hyphens
-        self.credit_card_pattern = r'\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}'
-        
-        # Hashtag regex - captures hashtags starting with # followed by letters/numbers
-        self.hashtag_pattern = r'#[A-Za-z0-9_]+'
+def extract_emails(text):
+    pattern = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
+    return re.findall(pattern, text)
 
-    def extract_emails(self, text):
-        """Extract all email addresses from text"""
-        return re.findall(self.email_pattern, text)
-    
-    def extract_urls(self, text):
-        """Extract all URLs from text"""
-        return re.findall(self.url_pattern, text)
-    
-    def extract_phone_numbers(self, text):
-        """Extract all phone numbers from text"""
-        return re.findall(self.phone_pattern, text)
-    
-    def extract_credit_cards(self, text):
-        """Extract all credit card numbers from text"""
-        return re.findall(self.credit_card_pattern, text)
-    
-    def extract_hashtags(self, text):
-        """Extract all hashtags from text"""
-        return re.findall(self.hashtag_pattern, text)
-    
-    def extract_all(self, text):
-        """Extract all supported data types from text"""
-        results = {
-            "emails": self.extract_emails(text),
-            "urls": self.extract_urls(text),
-            "phone_numbers": self.extract_phone_numbers(text),
-            "credit_cards": self.extract_credit_cards(text),
-            "hashtags": self.extract_hashtags(text)
-        }
-        return results
+def extract_urls(text):
+    pattern = r'https?://(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+(?:/[^\s]*)?'
+    return re.findall(pattern, text)
+
+def extract_phone_numbers(text):
+    pattern = r'\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}'
+    return re.findall(pattern, text)
+
+def extract_hashtags(text):
+    pattern = r'#\w+'
+    return re.findall(pattern, text)
 
 def main():
-    # Example usage
-    if len(sys.argv) < 2:
-        print("Usage: python extractor.py <file_path>")
-        print("Or pipe text: cat file.txt | python extractor.py")
+    # Load the test strings from a file or define directly
+    try:
+        with open("test_strings.txt", "r") as file:
+            text = file.read()
+    except FileNotFoundError:
+        print("Test file not found. Please create 'test_strings.txt'")
         return
+
+    # Run extractions
+    emails = extract_emails(text)
+    urls = extract_urls(text)
+    phones = extract_phone_numbers(text)
+    hashtags = extract_hashtags(text)
+
+    # Save results to a file
+    with open("results.txt", "w") as out_file:
+        out_file.write("Email Addresses:\n")
+        out_file.write('\n'.join(emails) + '\n\n')
+
+        out_file.write("URLs:\n")
+        out_file.write('\n'.join(urls) + '\n\n')
+
+        out_file.write("Phone Numbers:\n")
+        out_file.write('\n'.join(phones) + '\n\n')
+
+        out_file.write("Hashtags:\n")
+        out_file.write('\n'.join(hashtags) + '\n')
     
-    extractor = DataExtractor()
-    
-    # Handle both file input and piped input
-    if len(sys.argv) == 2 and sys.argv[1] != '-':
-        try:
-            with open(sys.argv[1], 'r') as file:
-                text = file.read()
-        except FileNotFoundError:
-            print(f"Error: File '{sys.argv[1]}' not found.")
-            return
-    else:
-        # Read from standard input if no file specified or '-' is specified
-        text = sys.stdin.read()
-    
-    results = extractor.extract_all(text)
-    
-    # Display results
-    print("\n===== Extraction Results =====")
-    
-    print("\nEmails found:")
-    for i, email in enumerate(results["emails"], 1):
-        print(f"{i}. {email}")
-    
-    print("\nURLs found:")
-    for i, url in enumerate(results["urls"], 1):
-        print(f"{i}. {url}")
-    
-    print("\nPhone numbers found:")
-    for i, phone in enumerate(results["phone_numbers"], 1):
-        print(f"{i}. {phone}")
-    
-    print("\nCredit card numbers found:")
-    for i, cc in enumerate(results["credit_cards"], 1):
-        print(f"{i}. {cc}")
-    
-    print("\nHashtags found:")
-    for i, tag in enumerate(results["hashtags"], 1):
-        print(f"{i}. {tag}")
+    print("Extraction completed. Results saved to 'results.txt'")
 
 if __name__ == "__main__":
     main()

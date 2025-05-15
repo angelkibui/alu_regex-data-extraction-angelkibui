@@ -1,0 +1,16 @@
+Email Addresses:
+angel@example.com
+angel.kibui@alu.co.uk
+
+URLs:
+https://www.example.com
+http://blog.example.org/about
+
+Phone Numbers:
+(123) 456-7890
+123-456-7890
+123.456.7890
+
+Hashtags:
+#example
+#ThisIsAHashtag
